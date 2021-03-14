@@ -1,0 +1,71 @@
+version: '3.6'
+
+services:
+
+  redis1:
+    image: redis:5.0
+    restart: always
+    ports:
+      - 6379:6379
+    networks:
+      - dev
+    volumes:
+      - redis-data1/:/data
+
+  redis2:
+    image: redis:5.0
+    restart: always
+    ports:
+      - 6380:6379
+    networks:
+      - dev
+    volumes:
+      - redis-data2/:/data
+
+  redis3:
+    image: redis:5.0
+    restart: always
+    ports:
+      - 6381:6379
+    networks:
+      - dev
+    volumes:
+      - redis-data3/:/data
+
+  redis4:
+    image: redis:5.0
+    restart: always
+    ports:
+      - 6382:6379
+    networks:
+      - dev
+    volumes:
+      - redis-data4/:/data
+
+  twemproxy:
+    build: .
+    ports:
+      - "26379:26379"
+    depends_on:
+      - "redis1"      
+      - "redis2"      
+      - "redis3"      
+      - "redis4"      
+    networks:
+      - dev
+  
+  client:
+    build: client
+    depends_on:
+      - "twemproxy"
+    networks:
+      - dev
+
+networks:
+  dev:
+
+volumes:
+  redis-data1:
+  redis-data2:
+  redis-data3:
+  redis-data4:
